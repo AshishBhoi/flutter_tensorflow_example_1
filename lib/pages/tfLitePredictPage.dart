@@ -28,10 +28,9 @@ class _TfLitePredictPageState extends State<TfLitePredictPage> {
   }
 
   detectImage(File image) async {
-    var output = await Tflite.runModelOnImage(
-        path: image.path
-    );
 
+    var output = await Tflite.runModelOnImage(path: image.path);
+    print(output);
     setState(() {
       _output = output;
       _loading = false;
@@ -40,8 +39,8 @@ class _TfLitePredictPageState extends State<TfLitePredictPage> {
 
   loadModel() async {
     await Tflite.loadModel(
-      model: "assets/tflite/model_unquant.tflite",
-      labels: "assets/tflite/labels.txt",
+      model: "assets/tflite/image_classification_model.tflite",
+      labels: "assets/tflite/image_classification_model.txt",
     );
   }
 
@@ -63,14 +62,15 @@ class _TfLitePredictPageState extends State<TfLitePredictPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            _loading ? PredictionView (
-              string: "No Inputs",
-            )
-            : PredictionView(
-              string: _output != null
-                  ? '${_output[0]['label']}'
-                  : "no Prediction",
-            ),
+            _loading
+                ? PredictionView(
+                    string: "No Inputs",
+                  )
+                : PredictionView(
+                    string: _output != null
+                        ? '${_output[0]['label']}'
+                        : "no Prediction",
+                  ),
             SizedBox(
               height: 20,
             ),
@@ -143,7 +143,7 @@ class _TfLitePredictPageState extends State<TfLitePredictPage> {
 
   getImageFromCamera() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
-    if(pickedFile == null) return null;
+    if (pickedFile == null) return null;
 
     setState(() {
       image = File(pickedFile.path);
@@ -154,8 +154,7 @@ class _TfLitePredictPageState extends State<TfLitePredictPage> {
 
   getImageFromGallery() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    if(pickedFile == null) return null;
-
+    if (pickedFile == null) return null;
 
     setState(() {
       image = File(pickedFile.path);
